@@ -174,3 +174,4 @@ Adapt table schemas and data in setup script:
 - Engage the audience with business-relevant questions
 - Focus on measurable business benefits, not just technical features
 - Prepare for follow-up questions about implementation and costs
+

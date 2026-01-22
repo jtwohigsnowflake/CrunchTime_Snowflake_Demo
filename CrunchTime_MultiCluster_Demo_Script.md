@@ -145,3 +145,4 @@ ORDER BY start_time DESC;
 - **If demo data is insufficient**: Re-run data generation with higher volume
 - **If warehouses don't scale**: Check account permissions and scaling policies
 - **If timing is off**: Practice run-through beforehand and adjust query complexity
+

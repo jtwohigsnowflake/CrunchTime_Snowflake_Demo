@@ -271,3 +271,4 @@
 - [Snowflake Multi-Cluster Warehouse Documentation](https://docs.snowflake.com/en/user-guide/warehouses-multicluster.html)
 - [Scaling Policies Best Practices](https://docs.snowflake.com/en/user-guide/warehouses-multicluster.html#scaling-policy)
 - [Cost Optimization Guidelines](https://docs.snowflake.com/en/user-guide/cost-understanding-overall.html)
+

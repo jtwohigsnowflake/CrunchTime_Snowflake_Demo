@@ -12,7 +12,7 @@ WITH date_range AS (
     FROM TABLE(GENERATOR(ROWCOUNT => 730))
 ),
 hourly_slots AS (
-    SELECT DATEADD(hour, ROW_NUMBER() OVER (ORDER BY SEQ4()) - 1, '00:00:00'::TIME) as hour_slot
+    SELECT (ROW_NUMBER() OVER (ORDER BY SEQ4()) + 7) as hour_of_day -- Hours 8-23 (8 AM to 11 PM)
     FROM TABLE(GENERATOR(ROWCOUNT => 16)) -- 8 AM to 11 PM (16 hours)
 ),
 transaction_base AS (
@@ -20,19 +20,19 @@ transaction_base AS (
         r.restaurant_id,
         mi.item_id,
         mi.price as base_price,
-        DATEADD(hour, h.hour_slot, d.transaction_date) as transaction_datetime
+        DATEADD(hour, h.hour_of_day, d.transaction_date::TIMESTAMP_NTZ) as transaction_datetime
     FROM RESTAURANTS r
     CROSS JOIN MENU_ITEMS mi
     CROSS JOIN date_range d
     CROSS JOIN hourly_slots h
     WHERE mi.restaurant_id = r.restaurant_id
-    AND h.hour_slot BETWEEN TIME('08:00:00') AND TIME('23:00:00')
+    AND h.hour_of_day BETWEEN 8 AND 23
     -- Add randomness to create realistic transaction patterns
     AND UNIFORM(1, 100, RANDOM()) <= 
         CASE 
-            WHEN TIME(h.hour_slot) BETWEEN TIME('11:30:00') AND TIME('14:00:00') THEN 85 -- Lunch rush
-            WHEN TIME(h.hour_slot) BETWEEN TIME('17:30:00') AND TIME('21:00:00') THEN 90 -- Dinner rush
-            WHEN TIME(h.hour_slot) BETWEEN TIME('08:00:00') AND TIME('10:30:00') THEN 45 -- Breakfast
+            WHEN h.hour_of_day BETWEEN 11 AND 14 THEN 85 -- Lunch rush (11 AM - 2 PM)
+            WHEN h.hour_of_day BETWEEN 17 AND 21 THEN 90 -- Dinner rush (5 PM - 9 PM)
+            WHEN h.hour_of_day BETWEEN 8 AND 10 THEN 45 -- Breakfast (8 AM - 10 AM)
             ELSE 25 -- Off-peak
         END
 )
